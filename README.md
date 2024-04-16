@@ -1,9 +1,10 @@
 # Arch Linux Install Script
-This script is in active development. This is the first avaliable for use version i have managed to produce. Feel free to use.
+This script is in active development. This is the first version avaliable for use i have managed to produce. Feel free to use.
+This is something i use to make my arch install easier when i reinstall for any reason. This will be tailored to my configuration.
 
 ## Developer Notes
 
-This script is build with system compatibility in mind. Works for installs on both Intel and AMD CPUs.
+This script is built with system compatibility in mind. Works for installs on both Intel and AMD CPUs.
 This script was built with static ips in mind so it is setup with systemd-networkd and systemd-resolved
 
 Will add options to change this depening on user needs.
