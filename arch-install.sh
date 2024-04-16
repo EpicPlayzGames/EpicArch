@@ -251,7 +251,6 @@ enable_services() {
 
 startup() {
 	detectcpu
-	detectgpu
 	check_disk
 	swap
 	partition_disk
