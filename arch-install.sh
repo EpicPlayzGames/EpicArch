@@ -1,7 +1,7 @@
 #!/bin/bash
 #
 # Arch Linux Install Script by EpicPlayzGames
-# https://github.com/EpicPlayzGames/ArchLinux-Install-Script 
+# https://github.com/EpicPlayzGames/EpicArch
 #
 echo -ne "
 -----------------------------------------------
