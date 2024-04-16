@@ -34,7 +34,7 @@ Post install configuration like:
 
 - DE Support, will add the ability to chose a select DE and then install the nessaccary requirements for this DE to function
 - LUKS and Full Disk Encryption Options
-- DHCP and Static IP config choise
+- DHCP and Static IP config choice
 - and more!
 
 ## Last Words
