@@ -28,7 +28,7 @@ check_disk() {
 	fi
 }
 
-# Determain Swap Needs
+# Determine Swap Needs
 swap() {
         # Ask for Swap Allocation
         echo -ne "Swap? (y/n): "
@@ -58,11 +58,12 @@ partition_disk() {
 	fi
 }
 
+# Create System Filesystem
 create_filesystem() {
 	echo "Creating Filesystem..."
 
 	# Create the Boot Drive Filesystem
-	if [[ "${SWAP}" == "y" || "${SWAP}" == "Y" ]]
+	if [[ "${SWAP}" == "y" || "${SWAP}" == "Y" ]] # If Swap Was Selected
 	then
 		mkfs.fat -F32 ${PARTITION1}
 		mkswap ${PARTITION2}
@@ -73,11 +74,12 @@ create_filesystem() {
 	fi 
 }
 
+# Mount Filesystem for Install
 mount_filesystem() {
 	echo "Mounting Filesystem..."
 
-	# Mount partitions based on whether or not swap is present
-	if [[ "${SWAP}" == "y" || "${SWAP}" == "Y" ]]
+	# Mount Given Partitions
+	if [[ "${SWAP}" == "y" || "${SWAP}" == "Y" ]] # If Swap Was Selected
 	then
 		mount ${PARTITION3} /mnt
 		swapon ${PARTITION2}
@@ -88,6 +90,7 @@ mount_filesystem() {
 	fi
 }
 
+# Generate Pacman Mirrors with Reflector
 generate_mirrors() {
 	echo "Generating Mirrors..."
 	echo ""
@@ -99,6 +102,7 @@ generate_mirrors() {
  	echo "Reflector Finished"
 }
 
+# Determine CPU Vendor for Driver Install
 detectcpu() {
 	# Detect whether CPU is AMD or Intel
 	if lscpu | grep "AuthenticAMD"
@@ -109,8 +113,9 @@ detectcpu() {
 	fi
 }
 
+# Determine GPU Vendor for Driver Install
 detectgpu() {
-	# Detect the system GPU for Driver Install
+	# Download LSHW to check given displays
 	pacman -Sy lshw --noconfirm
 
 	# Detect whether GPU is Nvidia or AMD
@@ -125,40 +130,45 @@ detectgpu() {
 	fi
 
 	# Set Drivers if GPU is Nvidia
-        if [[ "${GPU}" == "nvidia" ]]
-        then
-                GPUDRIVER=nvidia
-                GPUUTILS=nvidia-utils
-        fi
+    if [[ "${GPU}" == "nvidia" ]]
+    then
+            GPUDRIVER=nvidia
+            GPUUTILS=nvidia-utils
+    fi
 
 	# Set Drivers if GPU is AMD
-        if [[ "${GPU}" == "amd" ]]
-        then
-                GPUDRIVER=mesa
-                GPUUTILS=vulkan-radeon
-        fi
+    if [[ "${GPU}" == "amd" ]]
+    then
+            GPUDRIVER=mesa
+            GPUUTILS=vulkan-radeon
+    fi
 }
 
+# Start Base Arch Install
 base_install() {
 	echo "Starting Installation of Base System Packages..."
 
 	# Install Base System Packages
 	pacstrap -K /mnt base base-devel linux linux-headers linux-firmware ${CPU}-ucode efibootmgr grub sudo nano git curl wget os-prober man-db man-pages texinfo
 
+	# Generate FSTAB File
 	echo "Generating FSTAB File..."
 	genfstab -U /mnt >> /mnt/etc/fstab
 	echo "Success!"
 }
 
+# Set System Timezone
 set_timezone() {
 	echo "Starting Timezone Configuration..."
 
 	echo -ne "Enter your Region (ex. America/Chicago): "
 	read REGION
 
+	# Set Symbolic Link for System Timezone File
 	ln -sf /mnt/usr/share/zoneinfo/${REGION} /mnt/etc/localtime
 	arch-chroot /mnt hwclock --systohc
 
+	# Generate System Locales
 	echo "en_US.UTF-8 UTF-8" | tee -a /mnt/etc/locale.gen
 	arch-chroot /mnt locale-gen 
 
@@ -166,6 +176,7 @@ set_timezone() {
 	echo "LANG=en_US.UTF-8" >> /mnt/etc/locale.conf
 }
 
+# Set Default System Hostname
 set_hostname() {
 	# Ask for Prefered Hostname
 	echo -ne "Enter Hostname (Computer Name): "
@@ -174,6 +185,7 @@ set_hostname() {
 	echo ${HOSTNAME} >> /mnt/etc/hostname
 }
 
+# Setup Network Configuration
 network_configuration() {
 	echo "Starting Network Configuration..."
 	
@@ -209,6 +221,7 @@ network_configuration() {
         echo "127.0.1.1       ${HOSTNAME}.localdomain      ${HOSTNAME}" | tee -a /mnt/etc/hosts
 }
 
+# Create System User
 create_user() {
 	# Set Root Password
 	echo "Enter Root Password"
@@ -222,7 +235,7 @@ create_user() {
 	read USERNAME
 
  	arch-chroot /mnt useradd -m ${USERNAME} --badname -s /bin/bash 
-        arch-chroot /mnt usermod -aG wheel ${USERNAME}
+    arch-chroot /mnt usermod -aG wheel ${USERNAME}
 
  	echo "Enter your Password"
   	arch-chroot /mnt passwd ${USERNAME}
@@ -232,6 +245,7 @@ create_user() {
 
 }
 
+# Setup Arch Bootloader using Grub
 grub_setup() {
 	echo "Starting Grub Bootloader Configuration..."
 
@@ -244,6 +258,7 @@ grub_setup() {
 	arch-chroot /mnt grub-mkconfig -o /boot/grub/grub.cfg
 }
 
+# Enable User Services
 enable_services() {
 	arch-chroot /mnt systemctl --type=service enable systemd-networkd
 	arch-chroot /mnt systemctl --type=service enable systemd-resolved
