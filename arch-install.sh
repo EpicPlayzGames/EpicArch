@@ -8,6 +8,10 @@ echo -ne "
 - Arch Linux Install Script by EpicPlayzGames -
 -----------------------------------------------
 "
+
+SCRIPT_DIR="$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+SCRIPTS_DIR="$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"/scripts
+
 # Check the Current System Disks
 check_disk() {
     # Detect Boot Drive
@@ -149,7 +153,7 @@ base_install() {
 	echo "Starting Installation of Base System Packages..."
 
 	# Install Base System Packages
-	pacstrap -K /mnt base base-devel linux linux-headers linux-firmware ${CPU}-ucode ${GPUDRIVER} ${GPUUTILS} efibootmgr grub sudo nano git curl wget os-prober man-db man-pages texinfo
+	pacstrap -K /mnt base base-devel linux linux-headers linux-firmware ${CPU}-ucode ${GPUDRIVER} ${GPUUTILS} efibootmgr grub archlinux-keyring sudo nano git curl wget os-prober man-db man-pages texinfo
 
 	# Generate FSTAB File
 	echo "Generating FSTAB File..."
@@ -282,6 +286,9 @@ startup() {
 
 umount -A --recursive /mnt # In case of mounted partitions on install start
 startup
+
+chmod +x ${SCRIPTS_DIR}/de-setup.sh
+source ${SCRIPTS_DIR}/de-setup.sh
 
 umount -A --recursive /mnt
 echo "Unmounted /mnt"
