@@ -155,6 +155,13 @@ base_install() {
 	# Install Base System Packages
 	pacstrap -K /mnt base base-devel linux linux-headers linux-firmware ${CPU}-ucode ${GPUDRIVER} ${GPUUTILS} efibootmgr grub archlinux-keyring sudo nano git curl wget os-prober man-db man-pages texinfo
 
+	#Add parallel downloading
+	sed -i 's/^#ParallelDownloads/ParallelDownloads/' /mnt/etc/pacman.conf
+
+	#Enable multilib
+	sed -i "/\[multilib\]/,/Include/"'s/^#//' /mnt/etc/pacman.conf
+	arch-chroot /mnt pacman -Sy --noconfirm --needed
+
 	# Generate FSTAB File
 	echo "Generating FSTAB File..."
 	genfstab -U /mnt >> /mnt/etc/fstab
