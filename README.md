@@ -36,6 +36,7 @@ Want to contribute? Or find any issues? Feel free to open a pull request or an i
 ## TO-DO
 - [ ] Test detectgpu() function
 - [ ] Add DHCP Support
-- [ ] Add DE Selection Support
+- [X] Add DE Selection Support
 - [ ] Add Support for other filesystems
 - [X] Add Better Documentation
+- [ ] Add Conditional Statements to check for command failures
