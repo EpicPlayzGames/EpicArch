@@ -10,10 +10,10 @@ echo -ne "
 "
 # Check the Current System Disks
 check_disk() {
-        # Detect Boot Drive
-        lsblk
-        echo -ne "Select Disk to Install To: "
-        read DISK 
+    # Detect Boot Drive
+    lsblk
+    echo -ne "Select Disk to Install To: "
+    read DISK 
 
 	# Check if the Boot Drive is NVME or not
 	if [[ "${DISK}" =~ "nvme" ]] 
@@ -30,9 +30,9 @@ check_disk() {
 
 # Determine Swap Needs
 swap() {
-        # Ask for Swap Allocation
-        echo -ne "Swap? (y/n): "
-        read SWAP
+    # Ask for Swap Allocation
+    echo -ne "Swap? (y/n): "
+    read SWAP
 
 }
 
@@ -132,15 +132,15 @@ detectgpu() {
 	# Set Drivers if GPU is Nvidia
     if [[ "${GPU}" == "nvidia" ]]
     then
-            GPUDRIVER=nvidia
-            GPUUTILS=nvidia-utils
+        GPUDRIVER=nvidia
+        GPUUTILS=nvidia-utils
     fi
 
 	# Set Drivers if GPU is AMD
     if [[ "${GPU}" == "amd" ]]
     then
-            GPUDRIVER=mesa
-            GPUUTILS=vulkan-radeon
+        GPUDRIVER=mesa
+        GPUUTILS=vulkan-radeon
     fi
 }
 
@@ -149,7 +149,7 @@ base_install() {
 	echo "Starting Installation of Base System Packages..."
 
 	# Install Base System Packages
-	pacstrap -K /mnt base base-devel linux linux-headers linux-firmware ${CPU}-ucode efibootmgr grub sudo nano git curl wget os-prober man-db man-pages texinfo
+	pacstrap -K /mnt base base-devel linux linux-headers linux-firmware ${CPU}-ucode ${GPUDRIVER} ${GPUUTILS} efibootmgr grub sudo nano git curl wget os-prober man-db man-pages texinfo
 
 	# Generate FSTAB File
 	echo "Generating FSTAB File..."
@@ -181,7 +181,6 @@ set_hostname() {
 	# Ask for Prefered Hostname
 	echo -ne "Enter Hostname (Computer Name): "
 	read HOSTNAME
-
 	echo ${HOSTNAME} >> /mnt/etc/hostname
 }
 
@@ -215,10 +214,10 @@ network_configuration() {
 	DHCP=no
 	" | tee -a /mnt/etc/systemd/network/default.network
 
-        ## Not listed in the wiki, but needed to make networks work properly
-        echo "127.0.0.1       localhost" | tee -a /mnt/etc/hosts
-        echo "::1             localhost" | tee -a /mnt/etc/hosts
-        echo "127.0.1.1       ${HOSTNAME}.localdomain      ${HOSTNAME}" | tee -a /mnt/etc/hosts
+    ## Not listed in the wiki, but needed to make networks work properly
+    echo "127.0.0.1       localhost" | tee -a /mnt/etc/hosts
+    echo "::1             localhost" | tee -a /mnt/etc/hosts
+    echo "127.0.1.1       ${HOSTNAME}.localdomain      ${HOSTNAME}" | tee -a /mnt/etc/hosts
 }
 
 # Create System User
@@ -237,7 +236,7 @@ create_user() {
  	arch-chroot /mnt useradd -m ${USERNAME} --badname -s /bin/bash 
     arch-chroot /mnt usermod -aG wheel ${USERNAME}
 
- 	echo "Enter your Password"
+ 	echo "Enter ${USERNAME} Password"
   	arch-chroot /mnt passwd ${USERNAME}
 
 	echo "%wheel ALL=(ALL:ALL) ALL" | tee -a /mnt/etc/sudoers
