@@ -34,9 +34,9 @@ Post Install Configuration like:
 Want to contribute? Or find any issues? Feel free to open a pull request or an issue on github and I'll be sure to get back to you.
 
 ## TO-DO
-- [ ] Add Conditional Statements to check of command failures
 - [ ] Test detectgpu() function
 - [ ] Add DHCP Support
 - [X] Add DE Selection Support
 - [ ] Add Support for other filesystems
 - [X] Add Better Documentation
+- [ ] Add Conditional Statements to check for command failures
