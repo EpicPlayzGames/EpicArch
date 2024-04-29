@@ -284,7 +284,7 @@ startup() {
 	enable_services
 }
 
-umount -A --recursive /mnt # In case of mounted partitions on install start
+umount -A --recursive /mnt &> /dev/null # In case of mounted partitions on install start
 startup
 
 chmod +x ${SCRIPTS_DIR}/de-setup.sh
