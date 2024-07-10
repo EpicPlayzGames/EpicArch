@@ -219,7 +219,7 @@ network_configuration() {
 	Name=${NET_INTERFACE}
 
 	[Network]
-	Address=${SYSTEM_IP}
+	Address=${SYSTEM_IP}/24
 	Gateway=${GATEWAY}
 	DNS=${GATEWAY}
 	DHCP=no
